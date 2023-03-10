@@ -3,7 +3,10 @@
     <strong>Author:</strong>
     <%= tweet.author %>
   </p>
-
+  <p>
+    <strong>Created at:</strong>
+    <%= tweet.created_at.strftime(" %A, %F %R")  %>
+  </p>
   <p>
     <strong>Content:</strong>
     <%= tweet.content %>
