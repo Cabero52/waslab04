@@ -1,5 +1,5 @@
 class TweetsController < ApplicationController
-  before_action :set_tweet, only: %i[ show edit update destroy ]
+  before_action :set_tweet, only: %i[ show edit update destroy like]
 
   # GET /tweets or /tweets.json
   def index
@@ -18,7 +18,15 @@ class TweetsController < ApplicationController
   # GET /tweets/1/edit
   def edit
   end
-
+  def like
+    @tweet.likes += 1
+    if @tweet.save
+      redirect_to root_path
+    else
+      flash[:alert] = "Error"
+      redirect_to root_path
+    end
+  end
   # POST /tweets or /tweets.json
   def create
     @tweet = Tweet.new(tweet_params)
