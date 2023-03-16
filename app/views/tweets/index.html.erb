@@ -1,16 +1,30 @@
+
 <p style="color: green"><%= notice %></p>
 
-<h1>Tweets</h1>
+<h1 class="wottitle"> Wall of Tweets @ <a href="https://fly.io/"> Fly.io </a> </a></h1>
+<rb>
+  
+<div class="walltweet">
+  <form action="/tweets" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" autocomplete="off">
+    <table border="0" cellpadding="2">
+      <tbody><tr><td>Your name:</td><td><input size="70" type="text" name="tweet[author]" id="tweet_author"></td><td></td></tr>
+      <tr><td>Your tweet:</td><td><textarea rows="2" cols="70" name="tweet[content]" id="tweet_content"></textarea></td>
+      <td><input type="submit" name="commit" value="Tweet!" data-disable-with="Tweet!"></td></tr>
+      </tbody>
+      </table>
+  </form>
+  </div>
+
 
 <div id="tweets">
   <% @tweets.each do |tweet| %>
+    <% @tweet_day = tweet.created_at.strftime("%A, %B %d, %Y") %>
+      <% if @actual_day != @tweet_day %>
+      <h3>
+        ......
+        <%= @actual_day = @tweet_day %>
+      </h3>
+    <% end %>
     <%= render tweet %>
-    <p>
-      <%= link_to "Show this tweet", tweet %>
-      <%= button_to 'Like this tweet', like_tweet_path(tweet), method: :put %>
-      <hr>
-    </p>
   <% end %>
 </div>
-
-<%= link_to "New tweet", new_tweet_path %>

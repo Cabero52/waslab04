@@ -1,9 +1,12 @@
 class TweetsController < ApplicationController
-  before_action :set_tweet, only: %i[ show edit update destroy like]
+  before_action :set_tweet, only: %i[ show edit update destroy like ]
+
+
 
   # GET /tweets or /tweets.json
   def index
-    @tweets = Tweet.order(created_at: :desc)
+    @tweets = Tweet.order(created_at: :desc).all
+
   end
 
   # GET /tweets/1 or /tweets/1.json
@@ -18,31 +21,28 @@ class TweetsController < ApplicationController
   # GET /tweets/1/edit
   def edit
   end
-  def like
-    @tweet.likes += 1
-    if @tweet.save
-      redirect_to root_path
-    else
-      flash[:alert] = "Error"
-      redirect_to root_path
-    end
-  end
+
   # POST /tweets or /tweets.json
   def create
     @tweet = Tweet.new(tweet_params)
 
+
     respond_to do |format|
       if @tweet.save
-        if session[:created_ids]
+        format.html { redirect_to root_path , notice: "Tweet was successfully created." }
+        format.json { render :show, status: :created, location: @tweet }
+        if !session[:created_ids].nil?
           session[:created_ids] << @tweet.id
         else
           session[:created_ids] = [@tweet.id]
         end
-        format.html { redirect_to tweet_url(@tweet), notice: "Tweet was successfully created." }
-        format.json { render :show, status: :created, location: @tweet }
+
       else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @tweet.errors, status: :unprocessable_entity }
+        #format.html { render :new, status: :unprocessable_entity }
+        @tweet.errors.each do |error|
+          format.html { redirect_to root_path , alert: error.full_message }
+          format.json { render json: @tweet.errors, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -62,20 +62,28 @@ class TweetsController < ApplicationController
 
   # DELETE /tweets/1 or /tweets/1.json
   def destroy
-    
-    
+
+
     respond_to do |format|
-      if session[:created_ids].nil? || !session[:created_ids].include?(@tweet.id)
-        format.html { redirect_to tweets_url, notice: "You are not allowed to delete this tweet" }
-        format.json { head :Forbidden }
-      else
-        @tweet.destroy
-        format.html { redirect_to tweets_url, notice: "Tweet was successfully destroyed." }
-        format.json { head :no_content }
-      end
-      
+        if session[:created_ids].include?(@tweet.id)
+            @tweet.destroy
+           format.html { redirect_to tweets_url, notice: "Tweet was successfully destroyed." }
+          format.json { head :no_content }
+        else
+            format.html { redirect_to @tweet, notice: "You are not allowed to delete this tweet." }
+            format.json { head :forbidden }
+        end
     end
   end
+
+  def like
+    @tweet.likes += 1
+    @tweet.save
+    redirect_to :root
+  end
+
+
+
 
   private
     # Use callbacks to share common setup or constraints between actions.
