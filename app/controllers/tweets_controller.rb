@@ -30,7 +30,7 @@ class TweetsController < ApplicationController
     respond_to do |format|
       if @tweet.save
         format.html { redirect_to root_path , notice: "Tweet was successfully created." }
-        format.json { render :show, status: :created, location: @tweet }
+        format.json { render :index, status: :created, location: @tweet }
         if !session[:created_ids].nil?
           session[:created_ids] << @tweet.id
         else
@@ -38,11 +38,8 @@ class TweetsController < ApplicationController
         end
 
       else
-        #format.html { render :new, status: :unprocessable_entity }
-        @tweet.errors.each do |error|
-          format.html { redirect_to root_path , alert: error.full_message }
-          format.json { render json: @tweet.errors, status: :unprocessable_entity }
-        end
+        format.html { redirect_to root_path, notice: "Author is too short (minimum is 4 characters) and Content is too short (minimum is 4 characters)" }
+        format.json { render json: @tweet.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -69,7 +66,7 @@ class TweetsController < ApplicationController
             @tweet.destroy
            format.html { redirect_to tweets_url, notice: "Tweet was successfully destroyed." }
           format.json { head :no_content }
-        else
+        else #mai hauria d'entrar aqui
             format.html { redirect_to @tweet, notice: "You are not allowed to delete this tweet." }
             format.json { head :forbidden }
         end

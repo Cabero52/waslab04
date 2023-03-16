@@ -1,20 +1,22 @@
 
-<p style="color: green"><%= notice %></p>
 
 <h1 class="wottitle"> Wall of Tweets @ <a href="https://fly.io/"> Fly.io </a> </a></h1>
 <rb>
-  
 <div class="walltweet">
-  <form action="/tweets" accept-charset="UTF-8" method="post"><input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>" autocomplete="off">
-    <table border="0" cellpadding="2">
-      <tbody><tr><td>Your name:</td><td><input size="70" type="text" name="tweet[author]" id="tweet_author"></td><td></td></tr>
-      <tr><td>Your tweet:</td><td><textarea rows="2" cols="70" name="tweet[content]" id="tweet_content"></textarea></td>
-      <td><input type="submit" name="commit" value="Tweet!" data-disable-with="Tweet!"></td></tr>
-      </tbody>
-      </table>
-  </form>
-  </div>
+  <%= render "form", tweet: @tweet %>
+</div>
 
+<br>
+<% if notice %>
+<br>
+<div class="wotitem" id="notice">
+  <% if notice[0] == "T" %>
+    <span style="color: green;"><%= notice %></span>
+  <% else %>
+    <span style="color: red;"><%= notice %></span>
+  <% end %>
+</div>
+<% end %>
 
 <div id="tweets">
   <% @tweets.each do |tweet| %>
